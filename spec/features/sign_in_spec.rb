@@ -2,8 +2,8 @@ Capybara.default_driver = :selenium_chrome
 Capybara.current_session.driver.browser.manage.window.resize_to(1920, 1080)
 
 describe 'the signin process', type: :feature do
-  let(:email) { '' }
-  let(:pass) { '' }
+  let(:email) { ENV['GSM_EMAIL'] }
+  let(:pass) { ENV['GSM_PASS'] }
 
   before(:each) do
     visit('https://gsmarena.com')
@@ -30,7 +30,7 @@ describe 'the signin process', type: :feature do
       click_link('login-active')
       devices = all('.makers ul li')
       expect(devices[0]).to have_content("Realme\nGT Neo")
-      expect(devices[4]).to have_content("Samsung\n Galaxy A52")
+      expect(devices[4]).to have_content("Samsung\nGalaxy A52")
     end
   end
 end
