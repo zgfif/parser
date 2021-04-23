@@ -30,6 +30,7 @@ describe 'the signin process', type: :feature do
       click_link('login-active')
       devices = all('.makers ul li')
       expect(devices[0]).to have_content("Realme\nGT Neo")
+      expect(devices[4]).to have_content("Samsung\n Galaxy A52")
     end
   end
 end
