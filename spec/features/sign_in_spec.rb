@@ -2,9 +2,6 @@ Capybara.default_driver = :selenium_chrome
 Capybara.current_session.driver.browser.manage.window.resize_to(1920, 1080)
 
 describe 'the signin process', type: :feature do
-  let(:email) { ENV['GSM_EMAIL'] }
-  let(:pass) { ENV['GSM_PASS'] }
-
   before(:each) do
     visit('https://gsmarena.com')
   end
@@ -16,8 +13,8 @@ describe 'the signin process', type: :feature do
   context 'after sign in' do
     before(:each) do
       click_link('login-active')
-      fill_in('sEmail', with: email)
-      fill_in('sPassword', with: pass)
+      fill_in('sEmail', with: ENV['GSM_EMAIL'])
+      fill_in('sPassword', with: ENV['GSM_PASS'])
       find('#nick-submit').click
       sleep 5
     end

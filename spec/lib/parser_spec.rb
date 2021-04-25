@@ -7,4 +7,11 @@ RSpec.describe Parser do
       expect(parser.log_in).to eq('some text')
     end
   end
+
+  describe '#retrieve_data' do
+    it 'should return data' do
+      parser = Parser.new
+      expect(parser.retrieve_data).to eq('data')
+    end
+  end
 end
