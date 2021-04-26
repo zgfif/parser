@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require_relative '../capybara_config'
+
 describe 'the signin process', type: :feature do
   before(:each) do
     visit('https://gsmarena.com')
@@ -24,7 +28,7 @@ describe 'the signin process', type: :feature do
       click_link('login-active')
       devices = all('.makers ul li')
       parser = Parser.new(ENV['GSM_EMAIL'], ENV['GSM_PASS'])
-      scraped_result = parser.get_favorite_devices
+      scraped_result = parser.favorite_devices
 
       expect(devices[0]).to have_content("Realme\nGT Neo")
       expect(devices[4]).to have_content("Samsung\nGalaxy A52")
