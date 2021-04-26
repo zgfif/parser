@@ -1,6 +1,3 @@
-Capybara.default_driver = :selenium_chrome
-Capybara.current_session.driver.browser.manage.window.resize_to(1920, 1080)
-
 describe 'the signin process', type: :feature do
   before(:each) do
     visit('https://gsmarena.com')
