@@ -1,17 +1,18 @@
 require_relative '../../lib/parser'
 
 RSpec.describe Parser do
-  describe '#log in' do
-    it 'should return some text' do
-      parser = Parser.new
-      expect(parser.log_in).to eq('some text')
+    it 'should return mechanize link text' do
+      parser = Parser.new(ENV['GSM_EMAIL'], ENV['GSM_PASS'])
+      result = parser.signin
+      expect(result).to be_instance_of(Mechanize::Page::Link)
+      expect(result.text).to eq('pavlik5727')
     end
-  end
 
-  describe '#retrieve_data' do
     it 'should return data' do
-      parser = Parser.new
-      expect(parser.retrieve_data).to eq('data')
+      parser = Parser.new(ENV['GSM_EMAIL'], ENV['GSM_PASS'])
+      list = parser.get_favorite_devices
+      expect(list[0][:brand]).to eq('Realme')
+
+      expect(list[4][:model]).to eq('Galaxy A52')
     end
-  end
 end

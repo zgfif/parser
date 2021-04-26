@@ -1,23 +1,39 @@
 require 'mechanize'
 
 class Parser
-  def initialize; end
-
-  def log_in
-    agent = Mechanize.new
-    agent.follow_meta_refresh = true
-    page = agent.get('https://gsmarena.com/')
-
-    page.links.find{ |l| l.text.match?(/Log in/) }.click
-    f = page.forms[1]
-    f.sEmail = ENV['GSM_EMAIL']
-    f.sPassword = ENV['GSM_PASS']
-    page = agent.submit(f, f.buttons[0])
-
-    'some text'
+  def initialize(email, pass)
+    @email = email
+    @pass = pass
+    @agent = Mechanize.new { |a| a.follow_meta_refresh = true }
+    @page = @agent.get('https://gsmarena.com/')
   end
 
-  def retrieve_data
-    'data'
+  def signin
+    pass_authorization
+    @page.links.find { |l| l.text.match?(/pavlik5727/)}
+  end
+
+  def get_favorite_devices
+    result = []
+    @page = signin.click
+    content = @page.search('div.makers ul li a strong')
+    content.each_with_index do |elem, index|
+      item = {}
+      item[:id] = index
+      item[:brand] = elem.children[0].children[0].text
+      item[:model] = elem.children[0].children[2].text
+      result << item
+    end
+
+    result
+  end
+
+  private
+
+  def pass_authorization
+    form = @page.forms[1]
+    form.sEmail = @email
+    form.sPassword = @pass
+    @page = @agent.submit(form)
   end
 end
