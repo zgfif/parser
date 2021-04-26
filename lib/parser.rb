@@ -17,11 +17,12 @@ class Parser
     result = []
     @page = signin.click
     content = @page.search('div.makers ul li a strong')
+
     content.each_with_index do |elem, index|
-      item = {}
-      item[:id] = index
-      item[:brand] = elem.children[0].children[0].text
-      item[:model] = elem.children[0].children[2].text
+      inner_content = elem.children[0]
+      item = {id: index}
+      item[:brand] = inner_content.children[0].text
+      item[:model] = inner_content.children[2].text
       result << item
     end
 
