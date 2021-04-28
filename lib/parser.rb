@@ -1,62 +1,55 @@
 # frozen_string_literal: true
 
-require 'mechanize'
+require_relative '../capybara_config'
 
-# this class designed to signin and retrieve favorite devices from account
+# this class is used to signin and retrieve favorite phones from gsmarena.com
 class Parser
-  # pass here registered email and password
+  include Capybara::DSL
+
   def initialize(email, pass)
     @email = email
     @pass = pass
-    @agent = Mechanize.new { |a| a.follow_meta_refresh = true }
-    @page = @agent.get('https://gsmarena.com/')
   end
 
-  # performes authorization and returns reference to profile
   def signin
-    pass_authorization
-    @page.links.find { |l| l.text.match?(/pavlik5727/) }
+    visit('https://gsmarena.com')
+    click_link('login-active')
+    fill_in('sEmail', with: ENV['GSM_EMAIL'])
+    fill_in('sPassword', with: ENV['GSM_PASS'])
+    find_button('nick-submit').click
+    sleep 5
+    find('#login-active')
   end
 
-  # returns the xml node of required content
   def favorite_devices
-    content = signin.click.search('div.makers ul li a strong')
-    data_array(content)
+    signin unless authorized?
+
+    click_link('login-active')
+
+    content = all('div.makers ul li')
+
+    process_content(content)
+  end
+
+  def authorized?
+    on_site? && all('a')[7]['href'].match?(/account.php3/)
   end
 
   private
 
-  # fill in signin form and submit
-  def pass_authorization
-    form = @page.forms[1]
-    form.sEmail = @email
-    form.sPassword = @pass
-    @page = @agent.submit(form)
+  def on_site?
+    current_path.match?(%r{/})
   end
 
-  # returns array of favorite phones
-  def data_array(content)
+  def process_content(content)
     result = []
 
-    content.each_with_index do |elem, i|
-      inner = elem.children[0]
-      item = { id: i, brand: brand(inner), model: model(inner) }
+    content.each_with_index do |el, i|
+      brand, model = el.find('span').text.split("\n")
 
-      result << item
+      result << { id: i, brand: brand, model: model }
     end
 
-    # result looks like:
-    # [{ id: 1, brand: IPhone, model: 6s }, ..., { id: 10, ... }]
     result
-  end
-
-  # extracts phone's brand
-  def brand(item)
-    item.children[0].text
-  end
-
-  # extracts phone's model
-  def model(item)
-    item.children[2].text
   end
 end
